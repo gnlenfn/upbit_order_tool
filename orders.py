@@ -1,5 +1,5 @@
 from connection import server_url, hash_query, get_authorize
-from model import Order
+from model import Order, OrderResponse
 
 import requests
 
@@ -17,28 +17,30 @@ def post_order(order: Order):
     return response.json()
 
 
-def cancel_order(order_id: str):
+def cancel_order(order: OrderResponse):
     """
 
-    :param order_id: 매수 uuid
+    :param order: 선택 주문 정보
     :return:
 
     todo: 모델 맞게 수정
     """
     params = {
-        'uuid': order_id
+        'uuid': order.uuid
     }
 
     query_hash = hash_query(params)
     headers = get_authorize(query_hash)
 
-    requests.delete(server_url + '/v1/order', params=params, headers=headers)
+    response = requests.delete(server_url + '/v1/order', params=params, headers=headers)
+
+    return response.json()
 
 
 def get_orders():
 
-    query_hash = hash_query({})
+    query_hash = hash_query({'states[]': ['wait']})
     headers = get_authorize(query_hash)
 
     response = requests.get(f"{server_url}/v1/orders", headers=headers)
-    return response
+    return response.json()

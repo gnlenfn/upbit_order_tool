@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from model import Order
-from orders import post_order, get_orders
+from model import Order, OrderResponse
+from orders import post_order, get_orders, cancel_order
 
 app = FastAPI()
 
@@ -19,3 +19,8 @@ async def order(detail: Order):
 @app.get("/orders")
 async def get_wait_order_uuid():
     return get_orders()
+
+
+@app.delete("/orders")
+async def cancel_current_order(detail: OrderResponse):
+    return cancel_order(detail)
